@@ -41,17 +41,27 @@ public class ServiceEmprun extends Service {
 
         }catch (IOException e)
         {
-            e.printStackTrace();
+            EnvoyerMsg(e.getMessage());
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            EnvoyerMsg(e.getMessage());
         }finally {
             try {
                 getSocket().close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    private void EnvoyerMsg(String msg)
+    {
+        try {
+            PrintWriter out = new PrintWriter(getSocket().getOutputStream(), true);
+            out.println(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
