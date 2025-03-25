@@ -15,7 +15,6 @@ public class DocumentBasique implements Document {
     private Abonne reservePar;
     private LocalDateTime dateReservation;
 
-    private Abonne empruntePar;
     private LocalDateTime dateEmprunte;
 
     public DocumentBasique(int numero, String titre) {
@@ -30,7 +29,7 @@ public class DocumentBasique implements Document {
     }
 
     @Override
-    public void reserver(Abonne ab) throws ReservationException {
+    public synchronized void reserver(Abonne ab) throws ReservationException {
         if (etat == EtatDocument.LIBRE)
         {
             reservePar = ab;
@@ -48,10 +47,9 @@ public class DocumentBasique implements Document {
     }
 
     @Override
-    public void emprunter(Abonne ab) throws EmpruntException {
+    public synchronized void emprunter(Abonne ab) throws EmpruntException {
         if (etat == EtatDocument.LIBRE)
         {
-            empruntePar = ab;
             dateEmprunte = LocalDateTime.now();
             etat = EtatDocument.EMPRUNTE;
         }
@@ -59,7 +57,6 @@ public class DocumentBasique implements Document {
         {
             reservePar = null;
             dateReservation = null;
-            empruntePar = ab;
             dateEmprunte = LocalDateTime.now();
             etat = EtatDocument.EMPRUNTE;
         }
@@ -67,16 +64,15 @@ public class DocumentBasique implements Document {
         {
             throw new EmpruntException("Ce document est deja reserve");
         }
-        else
+        else if(etat == EtatDocument.EMPRUNTE)
         {
             throw new EmpruntException("Ce document est deja emprunte");
         }
     }
 
     @Override
-    public void retourner() {
+    public synchronized void retourner() {
         this.etat = EtatDocument.LIBRE;
-        this.empruntePar = null;
         this.dateEmprunte = null;
         this.reservePar = null;
         this.dateReservation = null;
