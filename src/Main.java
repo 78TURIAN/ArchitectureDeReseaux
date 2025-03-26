@@ -1,5 +1,5 @@
-import ClientServeur.Abonne;
-import ClientServeur.Mediatheque;
+import Abonnés.Abonne;
+import Infrastructure.Mediatheque;
 import Documents.DVD;
 import Documents.Document;
 import Documents.Livre;

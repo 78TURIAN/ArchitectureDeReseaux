@@ -1,6 +1,6 @@
 package Documents;
 
-import ClientServeur.Abonne;
+import Abonnés.Abonne;
 import Exeptions.EmpruntException;
 import Exeptions.ReservationException;
 

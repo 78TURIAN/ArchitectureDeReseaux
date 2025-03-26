@@ -1,4 +1,4 @@
-package ClientServeur;
+package bttp;
 
 public class Codage {
     public static String coder(String message) {

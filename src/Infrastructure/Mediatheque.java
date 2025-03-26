@@ -1,5 +1,6 @@
-package ClientServeur;
+package Infrastructure;
 
+import Abonnés.Abonne;
 import Documents.Document;
 
 import java.util.List;
@@ -23,9 +24,9 @@ public class Mediatheque
 
     public void demarrer()
     {
-        new Thread(new ServeurBTTP(ServiceReservation.class, PORT_RESERVATION, this)).start();
-        new Thread(new ServeurBTTP(ServiceEmprun.class, PORT_EMPRUNT, this)).start();
-        new Thread(new ServeurBTTP(ServiceRetour.class, PORT_RETOUR, this)).start();
+        new Thread(new Decoupleur(ServiceReservation.class, PORT_RESERVATION, this)).start();
+        new Thread(new Decoupleur(ServiceEmprun.class, PORT_EMPRUNT, this)).start();
+        new Thread(new Decoupleur(ServiceRetour.class, PORT_RETOUR, this)).start();
 
         for (Abonne ab : abonnes) {
             new Thread(ab).start();

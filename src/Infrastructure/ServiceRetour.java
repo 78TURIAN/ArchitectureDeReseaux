@@ -1,7 +1,8 @@
-package ClientServeur;
+package Infrastructure;
 
 import Documents.Document;
 import Exeptions.EmpruntException;
+import bttp.Codage;
 
 import java.io.BufferedReader;
 import java.io.IOException;

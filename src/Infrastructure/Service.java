@@ -1,4 +1,4 @@
-package ClientServeur;
+package Infrastructure;
 
 import java.net.Socket;
 

@@ -1,16 +1,16 @@
-package ClientServeur;
+package Infrastructure;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ServeurBTTP implements Runnable {
+public class Decoupleur implements Runnable {
     private final Class<? extends Service> serviceClass;
     private final int port;
     private final Mediatheque mediatheque;
 
-    public ServeurBTTP(Class<? extends Service> serviceClass, int port, Mediatheque mediatheque) {
+    public Decoupleur(Class<? extends Service> serviceClass, int port, Mediatheque mediatheque) {
         this.serviceClass = serviceClass;
         this.port = port;
         this.mediatheque = mediatheque;
