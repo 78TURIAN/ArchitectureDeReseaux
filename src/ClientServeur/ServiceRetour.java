@@ -9,12 +9,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 public class ServiceRetour extends Service{
-    private mediatheque mediatheque;
-
-    public ServiceRetour(mediatheque mediatheque) {
-        super();
-        this.mediatheque = mediatheque;
-    }
 
     @Override
     public void run()
@@ -24,14 +18,14 @@ public class ServiceRetour extends Service{
             BufferedReader in = new BufferedReader(new InputStreamReader(getSocket().getInputStream()));
             PrintWriter out = new PrintWriter(getSocket().getOutputStream(), true);
 
-            out.println("Quel est le document a retourner ?");
-            String IDDocument = in.readLine();
+            out.println(Codage.coder("Quel est le document a retourner ?"));
+            String IDDocument = Codage.decoder(in.readLine());
 
-            Document doc = mediatheque.chercherUnDocumentParID(Integer.parseInt(IDDocument));
+            Document doc = getMediatheque().chercherUnDocumentParID(Integer.parseInt(IDDocument));
             if (doc == null){throw new EmpruntException("Ce document n'existe pas");}
 
             doc.retourner();
-
+            out.println(Codage.coder("Le document " + IDDocument + " a bien ete retourne"));
         }catch (IOException e)
         {
             EnvoyerMsg(e.getMessage());
@@ -52,7 +46,7 @@ public class ServiceRetour extends Service{
     {
         try {
             PrintWriter out = new PrintWriter(getSocket().getOutputStream(), true);
-            out.println(msg);
+            out.println(Codage.coder(msg));
         } catch (IOException e) {
             e.printStackTrace();
         }

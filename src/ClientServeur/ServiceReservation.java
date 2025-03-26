@@ -1,7 +1,6 @@
 package ClientServeur;
 
 import Documents.Document;
-import Exeptions.EmpruntException;
 import Exeptions.ReservationException;
 
 import java.io.BufferedReader;
@@ -10,13 +9,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 public class ServiceReservation extends Service{
-    private mediatheque mediatheque;
-
-    public ServiceReservation(mediatheque mediatheque)
-    {
-        super();
-        this.mediatheque = mediatheque;
-    }
 
     @Override
     public void run() {
@@ -24,19 +16,21 @@ public class ServiceReservation extends Service{
             BufferedReader in = new BufferedReader(new InputStreamReader(getSocket().getInputStream()));
             PrintWriter out = new PrintWriter(getSocket().getOutputStream(), true);
 
-            out.println("Quel est votre numéro d'abonné ?");
-            String IDAbonne = in.readLine();
+            out.println(Codage.coder("Quel est votre numéro d'abonné ?"));
+            String IDAbonne = Codage.decoder(in.readLine());
 
-            out.println("Quel document voulez vous reserver ?");
-            String IDDocument = in.readLine();
+            out.println(Codage.coder("Quel document voulez vous reserver ?"));
+            String IDDocument = Codage.decoder(in.readLine());
 
-            Abonne ab = mediatheque.chercherUnAbonneParID(Integer.parseInt(IDAbonne));
-            Document doc = mediatheque.chercherUnDocumentParID(Integer.parseInt(IDDocument));
+            Abonne ab = getMediatheque().chercherUnAbonneParID(Integer.parseInt(IDAbonne));
+            Document doc = getMediatheque().chercherUnDocumentParID(Integer.parseInt(IDDocument));
 
             if (doc == null){throw new ReservationException("Ce document n'existe pas");}
             if(ab == null){throw new ReservationException("Cet abonne n'existe pas");}
 
             doc.reserver(ab);
+
+            out.println(Codage.coder("la reservation est validee n'oubliez pas de venir chercher votre document avant une heure a partir de maintenant"));
         }catch (IOException e)
         {
             EnvoyerMsg(e.getMessage());
@@ -57,7 +51,7 @@ public class ServiceReservation extends Service{
     {
         try {
             PrintWriter out = new PrintWriter(getSocket().getOutputStream(), true);
-            out.println(msg);
+            out.println(Codage.coder(msg));
         } catch (IOException e) {
             e.printStackTrace();
         }

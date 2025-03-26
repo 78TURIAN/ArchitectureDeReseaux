@@ -10,14 +10,6 @@ import java.io.PrintWriter;
 
 public class ServiceEmprun extends Service {
 
-    private mediatheque mediatheque;
-
-    public ServiceEmprun(mediatheque mediatheque)
-    {
-        super();
-        this.mediatheque = mediatheque;
-    }
-
     @Override
     public void run() {
         try
@@ -25,19 +17,20 @@ public class ServiceEmprun extends Service {
             BufferedReader in = new BufferedReader(new InputStreamReader(getSocket().getInputStream()));
             PrintWriter out = new PrintWriter(getSocket().getOutputStream(), true);
 
-            out.println("Quel est votre numéro d'abonné ?");
-            String IDAbonne = in.readLine();
+            out.println(Codage.coder("Quel est votre numéro d'abonné ?"));
+            String IDAbonne = Codage.decoder(in.readLine());
 
-            out.println("quel document voulez vous emprunter ?");
-            String IDDocument = in.readLine();
+            out.println(Codage.coder("Quel document voulez vous emprunter ?"));
+            String IDDocument = Codage.decoder(in.readLine());
 
-            Abonne ab = mediatheque.chercherUnAbonneParID(Integer.parseInt(IDAbonne));
-            Document doc = mediatheque.chercherUnDocumentParID(Integer.parseInt(IDDocument));
+            Abonne ab = getMediatheque().chercherUnAbonneParID(Integer.parseInt(IDAbonne));
+            Document doc = getMediatheque().chercherUnDocumentParID(Integer.parseInt(IDDocument));
 
             if (doc == null){throw new EmpruntException("Ce document n'existe pas");}
             if(ab == null){throw new EmpruntException("Cet abonne n'existe pas");}
 
             doc.emprunter(ab);
+            out.println(Codage.coder("Emprunt reeussi"));
 
         }catch (IOException e)
         {
@@ -59,7 +52,7 @@ public class ServiceEmprun extends Service {
     {
         try {
             PrintWriter out = new PrintWriter(getSocket().getOutputStream(), true);
-            out.println(msg);
+            out.println(Codage.coder(msg));
         } catch (IOException e) {
             e.printStackTrace();
         }

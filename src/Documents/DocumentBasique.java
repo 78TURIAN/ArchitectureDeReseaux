@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import ClientServeur.Abonne;
 import Exeptions.EmpruntException;
 import Exeptions.ReservationException;
+import Exeptions.RetournerExeption;
 
 public class DocumentBasique implements Document {
 
@@ -30,6 +31,8 @@ public class DocumentBasique implements Document {
 
     @Override
     public synchronized void reserver(Abonne ab) throws ReservationException {
+        verifierExpiration();
+
         if (etat == EtatDocument.LIBRE)
         {
             reservePar = ab;
@@ -48,21 +51,26 @@ public class DocumentBasique implements Document {
 
     @Override
     public synchronized void emprunter(Abonne ab) throws EmpruntException {
+        verifierExpiration();
+
         if (etat == EtatDocument.LIBRE)
         {
             dateEmprunte = LocalDateTime.now();
             etat = EtatDocument.EMPRUNTE;
         }
-        else if(etat == EtatDocument.RESERVE && ab.equals(reservePar))
-        {
-            reservePar = null;
-            dateReservation = null;
-            dateEmprunte = LocalDateTime.now();
-            etat = EtatDocument.EMPRUNTE;
-        }
         else if(etat == EtatDocument.RESERVE)
         {
-            throw new EmpruntException("Ce document est deja reserve");
+            if(ab.equals(reservePar))
+            {
+                reservePar = null;
+                dateReservation = null;
+                dateEmprunte = LocalDateTime.now();
+                etat = EtatDocument.EMPRUNTE;
+            }
+            else
+            {
+                throw new EmpruntException("Ce document est deja reserve");
+            }
         }
         else if(etat == EtatDocument.EMPRUNTE)
         {
@@ -72,13 +80,29 @@ public class DocumentBasique implements Document {
 
     @Override
     public synchronized void retourner() {
-        this.etat = EtatDocument.LIBRE;
-        this.dateEmprunte = null;
-        this.reservePar = null;
-        this.dateReservation = null;
+        if(etat == EtatDocument.EMPRUNTE)
+        {
+            this.etat = EtatDocument.LIBRE;
+            this.dateEmprunte = null;
+            this.reservePar = null;
+            this.dateReservation = null;
+        }
+        else
+        {
+            throw new RetournerExeption("Ce document ne peut pas etre retourne");
+        }
     }
 
     public String getTitre() {
         return titre;
     }
+    private void verifierExpiration() {
+        if (etat == EtatDocument.RESERVE && dateReservation != null &&
+                dateReservation.plusHours(1).isBefore(LocalDateTime.now())) {
+            reservePar = null;
+            dateReservation = null;
+            etat = EtatDocument.LIBRE;
+        }
+    }
+
 }
