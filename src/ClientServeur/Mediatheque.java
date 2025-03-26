@@ -19,14 +19,17 @@ public class Mediatheque
 
         this.documents = documents;
         this.abonnes = abonnes;
-        demarrer();
     }
 
-    private void demarrer()
+    public void demarrer()
     {
         new Thread(new ServeurBTTP(ServiceReservation.class, PORT_RESERVATION, this)).start();
         new Thread(new ServeurBTTP(ServiceEmprun.class, PORT_EMPRUNT, this)).start();
         new Thread(new ServeurBTTP(ServiceRetour.class, PORT_RETOUR, this)).start();
+
+        for (Abonne ab : abonnes) {
+            new Thread(ab).start();
+        }
     }
 
     public synchronized Document chercherUnDocumentParID(int ID)

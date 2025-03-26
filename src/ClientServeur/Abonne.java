@@ -61,9 +61,9 @@ public class Abonne implements Runnable {
                         break;
                     default:
                         //rien
-                        wait(1000);
                         break;
                 }
+                Thread.sleep(1000);//petite attente de 1seconde
             }catch (Exception e) {
                 e.printStackTrace();
             }
